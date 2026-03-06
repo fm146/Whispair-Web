@@ -1,26 +1,200 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --royal-blue: #063188;
+  --royal-blue-hover: #042466;
+  --dark-navy: #0b132b; 
+  --deep-black: #060b1b;
+  --electric-blue: #00e5ff;
+  --cool-gray: #f3f5f8;
+  --charcoal-gray: #161b22;
+  --border-color: rgba(255, 255, 255, 0.08);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-royal: var(--royal-blue);
+  --color-royal-hover: var(--royal-blue-hover);
+  --color-navy: var(--dark-navy);
+  --color-deep: var(--deep-black);
+  --color-electric: var(--electric-blue);
+  --color-cool: var(--cool-gray);
+  --color-charcoal: var(--charcoal-gray);
+  --color-border: var(--border-color);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-manrope);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--deep-black);
+  color: var(--cool-gray);
+  font-family: var(--font-inter), sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Micro-interactions */
+.fade-in {
+  animation: fadeIn 200ms ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* CSS to hide native indicators while keeping them clickable everywhere */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  position: relative;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Hide native picker icon completely */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-inner-spin-button,
+input[type="datetime-local"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-clear-button,
+input[type="time"]::-webkit-clear-button,
+input[type="datetime-local"]::-webkit-clear-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Base Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #ffffff;
+}
+
+/* ==================== React DatePicker - Whispair Dark Theme ==================== */
+.whispair-popper {
+  z-index: 9999 !important;
+}
+
+.whispair-calendar {
+  background: #1a1f2e !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  font-family: var(--font-sans), sans-serif !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7) !important;
+  color: white !important;
+}
+
+/* Header */
+.whispair-calendar .react-datepicker__header {
+  background: #0f1420 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  padding: 14px 0 8px !important;
+}
+
+.whispair-calendar .react-datepicker__current-month,
+.whispair-calendar .react-datepicker-time__header,
+.whispair-calendar .react-datepicker__day-name {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.whispair-calendar .react-datepicker__day-name {
+  color: rgba(255,255,255,0.4) !important;
+  font-weight: 600 !important;
+  font-size: 0.7rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+/* Navigation buttons */
+.whispair-calendar .react-datepicker__navigation-icon::before {
+  border-color: rgba(255,255,255,0.4) !important;
+}
+.whispair-calendar .react-datepicker__navigation:hover .react-datepicker__navigation-icon::before {
+  border-color: #3b7bef !important;
+}
+
+/* Days */
+.whispair-calendar .react-datepicker__day {
+  color: rgba(255,255,255,0.85) !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  transition: all 0.15s !important;
+}
+
+.whispair-calendar .react-datepicker__day:hover {
+  background: rgba(59,123,239,0.25) !important;
+  color: #ffffff !important;
+}
+
+.whispair-calendar .react-datepicker__day--selected,
+.whispair-calendar .react-datepicker__day--keyboard-selected {
+  background: #3b7bef !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.whispair-calendar .react-datepicker__day--today {
+  font-weight: 700 !important;
+  color: #3b7bef !important;
+}
+
+.whispair-calendar .react-datepicker__day--outside-month {
+  color: rgba(255,255,255,0.2) !important;
+}
+
+.whispair-calendar .react-datepicker__day--disabled {
+  color: rgba(255,255,255,0.2) !important;
+}
+
+/* Time picker */
+.whispair-calendar .react-datepicker__time-container {
+  border-left: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.whispair-calendar .react-datepicker__time-box {
+  background: #1a1f2e !important;
+}
+
+.whispair-calendar .react-datepicker__time-list-item {
+  color: rgba(255,255,255,0.8) !important;
+  font-weight: 500 !important;
+}
+
+.whispair-calendar .react-datepicker__time-list-item:hover {
+  background: rgba(59,123,239,0.25) !important;
+  color: white !important;
+}
+
+.whispair-calendar .react-datepicker__time-list-item--selected {
+  background: #3b7bef !important;
+  color: white !important;
+  font-weight: 700 !important;
+}
+
+/* Input field styling is handled via className prop on <DatePicker> */
+.react-datepicker-wrapper {
+  display: block !important;
+  width: 100% !important;
+}
+
+.react-datepicker__input-container {
+  display: block !important;
+  width: 100% !important;
 }
