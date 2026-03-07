@@ -28,6 +28,7 @@ function doGet(e) {
       case "releases": return createJsonResponse(SheetManager.getReleases(e.parameter.limit));
       case "track_facts": return createJsonResponse(SheetManager.getTrackFacts(e.parameter.title));
       case "shop_items": return createJsonResponse(SheetManager.getShopItems());
+      case "check_voucher": return createJsonResponse(SheetManager.checkVoucher(e.parameter.code));
       
       // --- BLOG (GOOGLE DOCS) ---
       case "blog_posts": return createJsonResponse(BlogManager.getAllPosts());
@@ -62,112 +63,64 @@ function doPost(e) {
 // 1. BLOG MANAGER (GOOGLE DOCS LOGIC)
 // ==========================================
 const BlogManager = {
-  /**
-   * Scans Registry and returns ON status posts
-   */
+  // ... (keep existing BlogManager logic)
   getAllPosts: function() {
     const registry = SheetManager.getTable("BlogRegistry");
     const posts = [];
-
     registry.forEach(row => {
       if (!row.docId) return;
       const meta = this.parsePostMetadata(row.docId);
       if (meta && meta.STATUS === "ON") {
-        posts.push({
-          slug: row.slug,
-          title: meta.TITLE,
-          description: meta.DESC,
-          date: meta.RELEASE_DATE,
-          author: meta.AUTHOR || "Whispair",
-          status: meta.STATUS
-        });
+        posts.push({ slug: row.slug, title: meta.TITLE, description: meta.DESC, date: meta.RELEASE_DATE, author: meta.AUTHOR || "Whispair", status: meta.STATUS });
       }
     });
     return posts;
   },
-
-  /**
-   * Only returns content if STATUS is ON
-   */
   getPostContent: function(slug) {
     const registry = SheetManager.getTable("BlogRegistry");
     const postEntry = registry.find(p => p.slug === slug);
     if (!postEntry) throw new Error("Post not found");
-
     const doc = DocumentApp.openById(postEntry.docId);
     const meta = this.parsePostMetadata(postEntry.docId);
-    
     if (meta.STATUS !== "ON") throw new Error("Post is currently offline");
-
     return {
-      meta: {
-        slug: slug,
-        title: meta.TITLE,
-        description: meta.DESC,
-        date: meta.RELEASE_DATE,
-        author: meta.AUTHOR || "Whispair"
-      },
+      meta: { slug, title: meta.TITLE, description: meta.DESC, date: meta.RELEASE_DATE, author: meta.AUTHOR || "Whispair" },
       content: this.parseDocToHtmlSection(doc.getBody())
     };
   },
-
-  /**
-   * Regex based metadata parser for <start> config
-   */
   parsePostMetadata: function(docId) {
     const doc = DocumentApp.openById(docId);
     const text = doc.getBody().getText();
-    
     const extract = (key) => {
       const regex = new RegExp(key + "\\s*:\\s*\\{(.+?)\\}", "i");
       const match = text.match(regex);
       return match ? match[1].trim() : "";
     };
-
-    return {
-      TITLE: extract("TITLE"),
-      DESC: extract("DESC"),
-      RELEASE_DATE: extract("RELEASE DATE"),
-      STATUS: extract("STATUS").toUpperCase(),
-      AUTHOR: extract("AUTHOR")
-    };
+    return { TITLE: extract("TITLE"), DESC: extract("DESC"), RELEASE_DATE: extract("RELEASE DATE"), STATUS: extract("STATUS").toUpperCase(), AUTHOR: extract("AUTHOR") };
   },
-
-  /**
-   * Advanced Parser for <start> <end> including Images
-   */
   parseDocToHtmlSection: function(body) {
     const numChildren = body.getNumChildren();
     let html = "";
     let reading = false;
-
     for (let i = 0; i < numChildren; i++) {
-          const element = body.getChild(i);
-          const type = element.getType();
-          const text = (type === DocumentApp.ElementType.PARAGRAPH || type === DocumentApp.ElementType.LIST_ITEM) 
-                       ? element.asText().getText().trim() : "";
-
-          if (text.toLowerCase() === "<start>") { reading = true; continue; }
-          if (text.toLowerCase() === "<end>") { reading = false; continue; }
-          if (!reading) continue;
-
-          if (type === DocumentApp.ElementType.PARAGRAPH) {
-            if (text === "" || text.includes("TITLE :") || text.includes("STATUS :")) continue;
-            html += `<p>${this.formatElement(element)}</p>`;
-          } else if (type === DocumentApp.ElementType.INLINE_IMAGE) {
-            html += this.processImage(element);
-          } else if (type === DocumentApp.ElementType.LIST_ITEM) {
-            html += `<li>${this.formatElement(element)}</li>`;
-          }
+      const element = body.getChild(i);
+      const type = element.getType();
+      const text = (type === DocumentApp.ElementType.PARAGRAPH || type === DocumentApp.ElementType.LIST_ITEM) ? element.asText().getText().trim() : "";
+      if (text.toLowerCase() === "<start>") { reading = true; continue; }
+      if (text.toLowerCase() === "<end>") { reading = false; continue; }
+      if (!reading) continue;
+      if (type === DocumentApp.ElementType.PARAGRAPH) {
+        if (text === "" || text.includes("TITLE :") || text.includes("STATUS :")) continue;
+        html += `<p>${this.formatElement(element)}</p>`;
+      } else if (type === DocumentApp.ElementType.INLINE_IMAGE) {
+        html += this.processImage(element);
+      } else if (type === DocumentApp.ElementType.LIST_ITEM) {
+        html += `<li>${this.formatElement(element)}</li>`;
+      }
     }
     return html;
   },
-
-  formatElement: function(el) {
-    // Basic link formatting helper
-    return el.asText().getText(); 
-  },
-
+  formatElement: function(el) { return el.asText().getText(); },
   processImage: function(img) {
     try {
       const blob = img.asInlineImage().getBlob();
@@ -183,7 +136,6 @@ const BlogManager = {
 function createNewBlogTemplate() {
   const doc = DocumentApp.getActiveDocument() || DocumentApp.create("New Whispair Article");
   const body = doc.getBody();
-  
   body.appendParagraph("<start>");
   body.appendParagraph("TITLE : {Judul Artikel Disini}");
   body.appendParagraph("DESC : {Meta deskripsi singkat untuk SEO}");
@@ -194,8 +146,6 @@ function createNewBlogTemplate() {
   body.appendParagraph("Tulis konten artikel Anda di sini...");
   body.appendParagraph("");
   body.appendParagraph("<end>");
-  
-  Logger.log("Template generated. Link: " + doc.getUrl());
 }
 
 // ==========================================
@@ -214,39 +164,57 @@ const SheetManager = {
     });
   },
 
-  getLatestRelease: function() {
-    return this.getTable("Music")[0] || null;
+  checkVoucher: function(code) {
+    if (!code) return null;
+    const vouchers = this.getTable("Vouchers");
+    const v = vouchers.find(item => item.code.toUpperCase() === code.toUpperCase());
+    if (!v) return { valid: false, message: "Invalid Code" };
+    
+    // Check expiry
+    const now = new Date();
+    const expiry = new Date(v.expiryDate);
+    if (now > expiry) return { valid: false, message: "Voucher Expired" };
+
+    return { 
+      valid: true, 
+      discountPercent: v.discountPercent || 0,
+      discountNominal: v.discountNominal || 0,
+      eventName: v.eventName
+    };
   },
 
-  getReleases: function(limit = 10) {
-    return this.getTable("Music").slice(0, limit);
-  },
-
+  getLatestRelease: function() { return this.getTable("Music")[0] || null; },
+  getReleases: function(limit = 10) { return this.getTable("Music").slice(0, limit); },
   getTrackFacts: function(title) {
     const facts = this.getTable("MusicFacts");
     return facts.find(f => f.title.toLowerCase() === title.toLowerCase()) || null;
   },
-
   getShopItems: function() {
     return this.getTable("Shop").filter(item => item.active === true || item.active === "TRUE");
   },
-
   saveBooking: function(payload) {
     const sheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID).getSheetByName("Bookings");
     sheet.appendRow([new Date(), payload.name, payload.phone, payload.date, payload.venue, payload.message, "NEW"]);
     return { success: true };
   },
-
-  saveOrder: function(payload) {
+  saveOrder: function(p) {
     const sheet = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID).getSheetByName("Orders");
-    sheet.appendRow([new Date(), payload.productId, payload.productName, payload.price, payload.customerName, payload.address, payload.phone, "UNPAID"]);
+    // Column Mapping: [Timestamp, OrderCode, Name, Email, Phone, Address, Items, Total, Status]
+    sheet.appendRow([
+      new Date(), 
+      p.orderCode, 
+      p.customerName, 
+      p.email, 
+      p.phone, 
+      p.address, 
+      p.items, 
+      p.total, 
+      "PAID (PENDING VERIFICATION)"
+    ]);
     return { success: true };
   }
 };
 
-/**
- * Global Utility
- */
 function createJsonResponse(data, status = 200) {
   return ContentService.createTextOutput(JSON.stringify({ status, data })).setMimeType(ContentService.MimeType.JSON);
 }

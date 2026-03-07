@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { CartProvider } from "@/lib/CartContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${manrope.variable} antialiased bg-cool text-dark`}
       >
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -4,11 +4,13 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingCart } from "lucide-react";
+import { useCart } from "@/lib/CartContext";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,13 +76,31 @@ export function Header() {
               <NavLink href="/blog">Blog</NavLink>
               <NavLink href="/shop">Shop</NavLink>
               <NavLink href="/contact">Contact</NavLink>
+              
+              <Link href="/checkout" className="relative p-2 text-gray-400 hover:text-white transition-colors group">
+                <ShoppingCart className="w-6 h-6" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-electric text-deep text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-lg group-hover:scale-110 transition-transform">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
+
               <Link href="/booking">
                 <Button size="sm">Book Us</Button>
               </Link>
             </nav>
 
-            {/* Mobile: Book Us Button Right */}
-            <div className="md:hidden flex items-center">
+            {/* Mobile: Icons Right */}
+            <div className="md:hidden flex items-center gap-2">
+              <Link href="/checkout" className="relative p-2 text-gray-400">
+                <ShoppingCart className="w-6 h-6" />
+                {itemCount > 0 && (
+                  <span className="absolute -top-0 -right-0 bg-electric text-deep text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                    {itemCount}
+                  </span>
+                )}
+              </Link>
               <Link href="/booking">
                 <Button size="sm" className="bg-deep border-transparent text-xs px-3 h-9 min-h-0">Book Us</Button>
               </Link>
