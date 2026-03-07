@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/Button";
 import { DateTimePicker } from "@/components/ui/DateTimePicker";
 import Link from "next/link";
-import { SiInstagram, SiX, SiYoutube, SiWhatsapp } from "react-icons/si";
+import { SiInstagram, SiX, SiYoutube, SiWhatsapp, SiTiktok } from "react-icons/si";
 import { HeroBackground } from "@/components/ui/HeroBackground";
 import { InstagramPhoto } from "@/lib/api";
 
@@ -73,6 +73,7 @@ export default function ContactPage({ instagramPhotos = [] }: { instagramPhotos?
               <h2 className="text-2xl font-heading font-extrabold text-white uppercase mb-4">Socials</h2>
               <div className="flex gap-6 items-center">
                 <SocialIcon href="https://www.instagram.com/whispair_" icon={SiInstagram} hoverColor="hover:text-[#E4405F]" />
+                <SocialIcon href="https://www.tiktok.com/@make_whispair" icon={SiTiktok} hoverColor="hover:text-[#010101]" />
                 <SocialIcon href="https://x.com/MakeW7660?s=09" icon={SiX} hoverColor="hover:text-white" />
                 <SocialIcon href="https://www.youtube.com/@Whispairband" icon={SiYoutube} hoverColor="hover:text-[#FF0000]" />
                 <SocialIcon href="https://wa.me/6285184003842" icon={SiWhatsapp} hoverColor="hover:text-[#25D366]" />

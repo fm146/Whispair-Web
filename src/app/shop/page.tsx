@@ -88,7 +88,7 @@ export default function ShopPage() {
                 <Button 
                   size="full" 
                   variant="outline" 
-                  className="opacity-0 group-hover:opacity-100 transition-opacity border-white/20 text-gray-300 hover:text-white hover:bg-white/5"
+                  className="border-white/20 text-gray-300 hover:text-white hover:bg-white/5"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedProduct(product);
