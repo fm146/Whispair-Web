@@ -26,6 +26,7 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="flex gap-6 items-center">
               <SocialLink href="https://www.instagram.com/whispair_" icon={SiInstagram} title="Instagram" hoverColor="hover:text-[#E4405F]" />
+              <SocialLink href="https://www.tiktok.com/@make_whispair" icon={SiTiktok} title="TikTok" hoverColor="hover:text-[#010101]" />
               <SocialLink href="https://www.youtube.com/@Whispairband" icon={SiYoutube} title="YouTube" hoverColor="hover:text-[#FF0000]" />
               <SocialLink href="https://wa.me/6285184003842" icon={SiWhatsapp} title="WhatsApp" hoverColor="hover:text-[#25D366]" />
               <SocialLink href="https://x.com/MakeW7660?s=09" icon={SiX} title="X" hoverColor="hover:text-white" />

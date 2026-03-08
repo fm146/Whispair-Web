@@ -152,8 +152,8 @@ export async function getSmartlinkConfig(): Promise<SmartlinkConfig[]> {
   if (!result || result.length === 0) {
     return [
       { active: true, title: "Spotify", url: "https://open.spotify.com/artist/7kZeWIy0BTHJfBRcYOQVFR", icon: "spotify", order: 1 },
-      { active: true, title: "Apple Music", url: "#", icon: "apple", order: 2 },
-      { active: true, title: "YouTube", url: "#", icon: "youtube", order: 3 },
+      { active: true, title: "Apple Music", url: "https://music.apple.com/us/song/different-path/1882066901", icon: "apple", order: 2 },
+      { active: true, title: "YouTube", url: "https://music.youtube.com/watch?v=JjGxaru57Po&si=p27tqQmn8b___dnm", icon: "youtube", order: 3 },
     ];
   }
   return result;
