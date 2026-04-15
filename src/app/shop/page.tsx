@@ -15,36 +15,7 @@ interface Product {
   description: string;
 }
 
-const MERCH_ITEMS: Product[] = [
-  {
-    id: 1,
-    title: "Whispair Classic Tee",
-    price: "$35.00",
-    image: "/merch_shirt.png",
-    description: "Our signature heavyweight cotton tee. Features the classic Whispair logo on the chest and a raw-edge finish. Built for the pit, styled for the street."
-  },
-  {
-    id: 2,
-    title: "Different Path Hoodie",
-    price: "$65.00",
-    image: "/merch_shirt.png",
-    description: "Premium fleece hoodie celebrating the latest single 'Different Path'. Oversized fit with high-density puff print graphics on the back."
-  },
-  {
-    id: 3,
-    title: "Noise Junkie Cap",
-    price: "$28.00",
-    image: "/merch_shirt.png",
-    description: "Distressed dad hat with 3D embroidery. adjustable strap with antique brass buckle. Perfect for hiding post-gig hair."
-  },
-  {
-    id: 4,
-    title: "Raw Energy Vinyl",
-    price: "$40.00",
-    image: "/merch_shirt.png",
-    description: "Limited edition 180g blood-red marbled vinyl. Includes a 12-page lyric booklet and exclusive behind-the-scenes photography."
-  }
-];
+const MERCH_ITEMS: Product[] = [];
 
 export default function ShopPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -64,42 +35,56 @@ export default function ShopPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {MERCH_ITEMS.map((product) => (
-            <div 
-              key={product.id} 
-              className="bg-charcoal rounded-2xl shadow-sm border border-border overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer"
-              onClick={() => setSelectedProduct(product)}
-            >
-              <div className="w-full aspect-[4/5] bg-navy/20 flex items-center justify-center overflow-hidden relative">
-                <Image 
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-4 left-4 bg-navy text-white text-xs font-bold uppercase py-1 px-3 rounded-full">
-                  New
+        {MERCH_ITEMS.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {MERCH_ITEMS.map((product) => (
+              <div 
+                key={product.id} 
+                className="bg-charcoal rounded-2xl shadow-sm border border-border overflow-hidden group hover:-translate-y-1 transition-transform duration-300 cursor-pointer"
+                onClick={() => setSelectedProduct(product)}
+              >
+                <div className="w-full aspect-[4/5] bg-navy/20 flex items-center justify-center overflow-hidden relative">
+                  <Image 
+                    src={product.image}
+                    alt={product.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4 bg-navy text-white text-xs font-bold uppercase py-1 px-3 rounded-full">
+                    New
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-heading font-bold text-lg mb-1 text-white truncate">{product.title}</h3>
+                  <p className="text-royal font-bold font-sans mb-4">{product.price}</p>
+                  <Button 
+                    size="full" 
+                    variant="outline" 
+                    className="border-white/20 text-gray-300 hover:text-white hover:bg-white/5"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedProduct(product);
+                    }}
+                  >
+                    View Item
+                  </Button>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="font-heading font-bold text-lg mb-1 text-white truncate">{product.title}</h3>
-                <p className="text-royal font-bold font-sans mb-4">{product.price}</p>
-                <Button 
-                  size="full" 
-                  variant="outline" 
-                  className="border-white/20 text-gray-300 hover:text-white hover:bg-white/5"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedProduct(product);
-                  }}
-                >
-                  View Item
-                </Button>
-              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-20 text-center border border-white/10 rounded-3xl bg-charcoal/30 backdrop-blur-sm">
+            <div className="w-20 h-20 mb-6 flex items-center justify-center rounded-full bg-navy/20 border border-white/10">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
             </div>
-          ))}
-        </div>
+            <h2 className="text-3xl font-heading font-bold text-white mb-3">Coming Soon</h2>
+            <p className="text-gray-400 font-sans max-w-sm">
+              We're preparing the next drop. Stay tuned for exclusive Whispair merchandise and physical releases.
+            </p>
+          </div>
+        )}
 
       </main>
 
